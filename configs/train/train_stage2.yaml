@@ -93,7 +93,7 @@ dataset:
   train:
     target: diffbir.dataset.codeformer.CodeformerDataset
     params:
-      file_list: /media/witai513/64e0bfd6-4b93-4dd5-9d71-9a1891ecba0d/data/ycy/ffhq/ffhq512/train_hr.list
+      file_list: ./data/dummy_train.list
       file_backend_cfg:
         target: diffbir.dataset.file_backend.HardDiskBackend
       out_size: 512
@@ -111,9 +111,9 @@ batch_transform:
   target: diffbir.dataset.batch_transform.IdentityBatchTransform
 
 train:
-  sd_path: /media/witai513/64e0bfd6-4b93-4dd5-9d71-9a1891ecba0d/data/ycy/DiffBIR-main/weights/v2-1_512-ema-pruned.ckpt
-  exp_dir: /media/witai513/64e0bfd6-4b93-4dd5-9d71-9a1891ecba0d/data/ycy/DiffBIR-main/experiments/stage2_ffhq512_NEW
-  swinir_path: /media/witai513/64e0bfd6-4b93-4dd5-9d71-9a1891ecba0d/data/ycy/DiffBIR-main/experiments/stage1_ffhq512/checkpoints/0010000.pt
+  sd_path: model_zoo/team04_PRIDE-face/v2-1_512-ema-pruned.ckpt
+  exp_dir: ./stage2
+  swinir_path: ~
   learning_rate: 2e-5
   # --- 改进：训练强度配置 ---
   batch_size: 4                 # 4090D 单卡跑 4 比较平衡
@@ -122,5 +122,5 @@ train:
   log_every: 100
   ckpt_every: 5000              # 每 5000 步存个档
   image_every: 500              # 每 500 步看一眼效果
-  resume: /media/witai513/64e0bfd6-4b93-4dd5-9d71-9a1891ecba0d/data/ycy/DiffBIR-main/experiments/stage2_ffhq512_NEW/checkpoints/0110000.pt
+  resume: ~
   noise_aug_timestep: 0
