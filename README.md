@@ -8,6 +8,7 @@ pip install gfpgan basicsr
 ## How to test the model?
 
 1.  Download our model from `model_zoo\team04_PRIDE-Face\model.txt`，put it in `model_zoo\team04_PRIDE-Face
+
 ** Please Note:** There are two different key models included that you need to be aware of:
 * `v2-1_512-ema-pruned.ckpt`: The SD2.1 base model. Please ensure its path is correctly configured in our `train_stage2.yaml` (or `stage2.yaml`) under the `train:` section (`sd_path: model_zoo/team04_PRIDE-face/v2-1_512-ema-pruned.ckpt`).
 * `04.pt`: Our core 140k-step fine-tuned pre-trained model. This will be explicitly loaded via the `--ckpt` argument when running the test command.
