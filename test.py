@@ -28,6 +28,7 @@ def main(args):
     device = "cuda" if torch.cuda.is_available() else "cpu"
     cfg = OmegaConf.load(args.config)
 
+    print(" 正在加载你 14 万步的 Identity 扩散模型...")
     cldm: ControlLDM = instantiate_from_config(cfg.model.cldm)
     cldm.load_pretrained_sd(torch.load(cfg.train.sd_path, map_location="cpu")["state_dict"])
     cldm.load_controlnet_from_ckpt(torch.load(args.ckpt, map_location="cpu"))
@@ -42,22 +43,26 @@ def main(args):
     
 
     with torch.no_grad():
-        for imp in tqdm(img_paths, desc="终极渲染中"):
+        for imp in tqdm(img_paths, desc="渲染中"):
             clean = load_image(imp).to(device)
             
-            prompt = ["high-quality, extremely detailed face, 8k resolution, photorealistic, sharp focus, clear skin texture"]
-            negative_prompt = ["blurry, out of focus, low quality, soft, smooth, deformed, plastic, waxy"]
+            prompt = ["high-quality face, realistic skin texture"]
+            negative_prompt = ["deformed, distorted, plastic, artificial, exaggerated"]
 
             cond = cldm.prepare_condition(clean, prompt)
             uncond = cldm.prepare_condition(clean, negative_prompt)
-        
+            
             z = sampler.sample(
                 model=cldm, device=device, steps=50,
-                x_size=(1, 4, 64, 64), cond=cond, uncond=uncond, cfg_scale=1.5
+                x_size=(1, 4, 64, 64), cond=cond, uncond=uncond, 
+                cfg_scale=1.0
             )
 
             hq = cldm.vae_decode(z)
             hq = (hq + 1) / 2
+            draft_img = (clean + 1) / 2
+            hq = hq * 0.55 + draft_img * 0.45 
+
             hq = hq.clamp(0, 1)[0].permute(1, 2, 0).cpu().numpy()
             hq = (hq * 255).astype(np.uint8)
 
@@ -74,7 +79,7 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--config", type=str, required=True)
     parser.add_argument("--ckpt", type=str, required=True)
-    parser.add_argument("--draft_input", type=str, required=True, help="GFPGAN生成的文件夹")
+    parser.add_argument("--draft_input", type=str, required=True, help="GFPGAN生成的草稿文件夹")
     parser.add_argument("--output", type=str, default="ntire_final_submit")
     args = parser.parse_args()
     main(args)
