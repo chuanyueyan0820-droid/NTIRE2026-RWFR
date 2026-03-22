@@ -80,6 +80,6 @@ if __name__ == "__main__":
     parser.add_argument("--config", type=str, required=True)
     parser.add_argument("--ckpt", type=str, required=True)
     parser.add_argument("--draft_input", type=str, required=True, help="GFPGAN生成的草稿文件夹")
-    parser.add_argument("--output", type=str, default="ntire_final_submit")
+    parser.add_argument("--output", type=str, default="Final_Submit")
     args = parser.parse_args()
     main(args)
